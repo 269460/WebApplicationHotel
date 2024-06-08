@@ -10,12 +10,12 @@ namespace HotelBookingApp.Infrastructure.Data
         public DbSet<Room> Rooms { get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<User> Users { get; set; }
-        
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseMySql("Server=localhost;Port=5506;Database=mydb;User Id=repl2;Password=111;SslMode=None;AllowPublicKeyRetrieval=True;", 
+                optionsBuilder.UseMySql("server=localhost;port=4406;user=repl;password=111;database=mydb;",
                     new MySqlServerVersion(new Version(8, 0, 21)));
             }
         }

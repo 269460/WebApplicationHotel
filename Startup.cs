@@ -18,13 +18,13 @@ namespace WebApplication1
             services.AddControllers();
 
             services.AddDbContext<MasterDbContext>(options =>
-                options.UseMySql(Configuration.GetConnectionString("MasterConnection"), 
-                    new MySqlServerVersion(new Version(8, 0, 21))));
+                options.UseMySql("server=localhost;port=4406;user=repl;password=111;database=mydb;",
+                    new MySqlServerVersion(new Version(8, 4,0))));
 
-            services.AddDbContext<SlaveDbContext>(options =>
-                options.UseMySql(Configuration.GetConnectionString("SlaveConnection"), 
-                    new MySqlServerVersion(new Version(8, 0, 21))));
-            
+            // services.AddDbContext<SlaveDbContext>(options =>
+            //     options.UseMySql(Configuration.GetConnectionString("SlaveConnection"),
+            //         new MySqlServerVersion(new Version(8, 0, 21))));
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
