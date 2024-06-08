@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>title</title>
+    <style>
+        .date-inputs {
+            margin-top: 20px;
+        }
+
+        .date-inputs label {
+            margin-right: 10px;
+        }
+
+        .room-table {
+            margin-top: 20px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .room-table th, .room-table td {
+            border: 1px solid #000;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .room-table th {
+            background-color: #f2f2f2;
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const startDateInput = document.getElementById("start-date");
+            const endDateInput = document.getElementById("end-date");
+
+            const today = new Date();
+            const tomorrow = new Date();
+            tomorrow.setDate(today.getDate() + 1);
+
+            // Formatowanie daty na YYYY-MM-DD
+            const formatDateString = (date) => {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            };
+
+            const todayString = formatDateString(today);
+            const tomorrowString = formatDateString(tomorrow);
+
+            // Ustawienie minimalnych dat
+            startDateInput.min = todayString;
+            endDateInput.min = tomorrowString;
+
+            // Aktualizacja minimalnej daty zakończenia pobytu po wyborze daty rozpoczęcia
+            startDateInput.addEventListener("change", function() {
+                const startDate = new Date(startDateInput.value);
+                startDate.setDate(startDate.getDate() + 1);
+                endDateInput.min = formatDateString(startDate);
+            });
+
+            document.getElementById("check-availability-button").addEventListener("click", function(event) {
+                event.preventDefault(); // Zapobiegamy domyślnej akcji formularza
+
+                const startDate = startDateInput.value;
+                const endDate = endDateInput.value;
+
+                if (new Date(startDate) >= new Date(endDate)) {
+                    alert("Data końca pobytu musi być późniejsza niż data początku pobytu.");
+                    return;
+                }
+
+                fetch(`/Rooms/AvailableRooms?startDate=${startDate}&endDate=${endDate}`)
+                    .then(response => response.text()) // Odczytujemy jako tekst zamiast bezpośrednio JSON
+                    .then(text => {
+                        console.log('Raw response:', text); // Logujemy surową odpowiedź
+                        try {
+                            const data = JSON.parse(text);
+                            console.log('Parsed JSON:', data); // Logujemy sparsowaną odpowiedź
+                            displayRooms(data);
+                        } catch (error) {
+                            console.error('Error parsing JSON:', error);
+                            alert("Wystąpił błąd podczas przetwarzania danych z serwera.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Wystąpił błąd podczas sprawdzania dostępnych pokoi.");
+                    });
+            });
+
+            function displayRooms(data) {
+                const table = document.getElementById("rooms-table");
+                table.innerHTML = ""; // Czyszczenie poprzednich wyników
+
+                if (data.length > 0) {
+                    const headerRow = document.createElement("tr");
+                    const headers = ["Numer pokoju", "Cena", "Pojemność"];
+                    headers.forEach(headerText => {
+                        const th = document.createElement("th");
+                        th.textContent = headerText;
+                        headerRow.appendChild(th);
+                    });
+                    table.appendChild(headerRow);
+
+                    data.forEach(room => {
+                        const row = document.createElement("tr");
+
+                        const cellNumber = document.createElement("td");
+                        cellNumber.textContent = room.roomNumber;
+                        row.appendChild(cellNumber);
+
+                        const cellPrice = document.createElement("td");
+                        cellPrice.textContent = room.price;
+                        row.appendChild(cellPrice);
+
+                        const cellCapacity = document.createElement("td");
+                        cellCapacity.textContent = room.capacity;
+                        row.appendChild(cellCapacity);
+
+                        table.appendChild(row);
+                    });
+                } else {
+                    const noRoomsRow = document.createElement("tr");
+                    const noRoomsCell = document.createElement("td");
+                    noRoomsCell.textContent = "Brak dostępnych pokoi w wybranym terminie.";
+                    noRoomsCell.colSpan = 3;
+                    noRoomsRow.appendChild(noRoomsCell);
+                    table.appendChild(noRoomsRow);
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+<div>
+    <h1>Wybierz swój termin pobytu a następnie sprawdź dostępne pokoje</h1>
+    <form>
+        <div class="date-inputs">
+            <label for="start-date">Początek pobytu:</label>
+            <input type="date" id="start-date" name="start-date" required>
+            <label for="end-date">Koniec pobytu:</label>
+            <input type="date" id="end-date" name="end-date" required>
+        </div>
+        <button type="submit" id="check-availability-button">Sprawdź dostępność</button>
+    </form>
+    <div id="rooms-container">
+        <h2>Dostępne pokoje:</h2>
+        <table id="rooms-table" class="room-table">
+            <!-- Tutaj zostaną dodane wyniki -->
+        </table>
+    </div>
+</div>
+</body>
+</html>

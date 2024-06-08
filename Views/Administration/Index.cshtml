@@ -1,0 +1,69 @@
+@model IEnumerable<HotelBookingApp.Domain.Models.Room>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Administracja strony</title>
+</head>
+<body>
+    <h1>Administracja strony</h1>
+
+    <!-- Sekcja dodawania pokoju -->
+    <div>
+        <h2>Dodaj pokój</h2>
+        <form method="post" action="/Rooms">
+            <div>
+                <label for="RoomNumber">Numer pokoju:</label>
+                <input type="text" id="RoomNumber" name="RoomNumber" />
+            </div>
+            <div>
+                <label for="Description">Opis:</label>
+                <textarea id="Description" name="Description"></textarea>
+            </div>
+            <div>
+                <label for="Capacity">Pojemność:</label>
+                <input type="number" id="Capacity" name="Capacity" />
+            </div>
+            <div>
+                <label for="IsAvailable">Dostępność:</label>
+                <select id="IsAvailable" name="IsAvailable">
+                    <option value="true">Dostępny</option>
+                    <option value="false">Niedostępny</option>
+                </select>
+            </div>
+            <button type="submit">Dodaj pokój</button>
+        </form>
+    </div>
+
+    <!-- Sekcja wyświetlania wszystkich pokoi -->
+    <div>
+        <h2>Lista pokoi</h2>
+        @* <table> *@
+        @*     <thead> *@
+        @*         <tr> *@
+        @*             <th>Numer pokoju</th> *@
+        @*             <th>Opis</th> *@
+        @*             <th>Pojemność</th> *@
+        @*             <th>Dostępność</th> *@
+        @*         </tr> *@
+        @*     </thead> *@
+        @*     <tbody> *@
+        @*         @foreach (var room in Model) *@
+        @*         { *@
+        @*             <tr> *@
+        @*                 <td>@room.Number</td> *@
+        @*                 <td>@room.Description</td> *@
+        @*                 <td>@room.Capacity</td> *@
+        @*                 <td>@(room.IsAvailable ? "Dostępny" : "Niedostępny")</td> *@
+        @*             </tr> *@
+        @*         } *@
+        @*     </tbody> *@
+        @* </table> *@
+    </div>
+</body>
+</html>
