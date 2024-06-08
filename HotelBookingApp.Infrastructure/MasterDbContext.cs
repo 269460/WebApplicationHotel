@@ -15,9 +15,10 @@ namespace HotelBookingApp.Infrastructure.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseMySql("Server=localhost;Port=4406;Database=mydb;User Id=repl2;Password=111;SslMode=None;AllowPublicKeyRetrieval=True;", 
-                    new MySqlServerVersion(new Version(8, 0, 21)));
+                optionsBuilder.UseMySql("server=localhost;port=4406;user=repl;password=111;database=mydb;",
+                    new MySqlServerVersion(new Version(8, 4, 1)));
             }
         }
     }
+
 }
