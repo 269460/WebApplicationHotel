@@ -21,9 +21,9 @@ namespace WebApplication1
                 options.UseMySql("server=localhost;port=4406;user=repl;password=111;database=mydb;",
                     new MySqlServerVersion(new Version(8, 4,0))));
 
-            // services.AddDbContext<SlaveDbContext>(options =>
-            //     options.UseMySql(Configuration.GetConnectionString("SlaveConnection"),
-            //         new MySqlServerVersion(new Version(8, 0, 21))));
+            services.AddDbContext<SlaveDbContext>(options =>
+                options.UseMySql("server=localhost;port=5506;user=repl;password=111;database=mydb;",
+                    new MySqlServerVersion(new Version(8, 4,0))));
 
             services.AddSwaggerGen(c =>
             {

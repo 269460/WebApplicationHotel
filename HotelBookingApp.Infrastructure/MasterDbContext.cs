@@ -11,6 +11,16 @@ namespace HotelBookingApp.Infrastructure.Data
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<User> Users { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Room>(entity =>
+            {
+                entity.Property(e => e.Number).HasColumnType("VARCHAR(255)");
+                entity.Property(e => e.Description).HasColumnType("TEXT");
+            });
+
+            base.OnModelCreating(modelBuilder);
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)

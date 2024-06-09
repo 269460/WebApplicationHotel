@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+/*using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using System.IO;
@@ -16,9 +16,9 @@ namespace HotelBookingApp.Infrastructure.Data
 
             var optionsBuilder = new DbContextOptionsBuilder<SlaveDbContext>();
             var connectionString = configuration.GetConnectionString("SlaveConnection");
-            optionsBuilder.UseSqlServer(connectionString);
+            optionsBuilder.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 21)));
 
             return new SlaveDbContext(optionsBuilder.Options);
         }
     }
-}
+}*/
