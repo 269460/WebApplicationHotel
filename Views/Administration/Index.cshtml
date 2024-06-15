@@ -1,69 +1,149 @@
-@model IEnumerable<HotelBookingApp.Domain.Models.Room>
-
-@{
-    Layout = null;
-}
-
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
 <head>
-    <title>Administracja strony</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Room</title>
 </head>
 <body>
-    <h1>Administracja strony</h1>
+<form id="addRoomForm">
+    <label for="number">Number:</label>
+    <input type="text" id="number" name="number" required><br><br>
 
-    <!-- Sekcja dodawania pokoju -->
-    <div>
-        <h2>Dodaj pokój</h2>
-        <form method="post" action="/Rooms">
-            <div>
-                <label for="RoomNumber">Numer pokoju:</label>
-                <input type="text" id="RoomNumber" name="RoomNumber" />
-            </div>
-            <div>
-                <label for="Description">Opis:</label>
-                <textarea id="Description" name="Description"></textarea>
-            </div>
-            <div>
-                <label for="Capacity">Pojemność:</label>
-                <input type="number" id="Capacity" name="Capacity" />
-            </div>
-            <div>
-                <label for="IsAvailable">Dostępność:</label>
-                <select id="IsAvailable" name="IsAvailable">
-                    <option value="true">Dostępny</option>
-                    <option value="false">Niedostępny</option>
-                </select>
-            </div>
-            <button type="submit">Dodaj pokój</button>
-        </form>
-    </div>
+    <label for="description">Description:</label>
+    <input type="text" id="description" name="description" required><br><br>
 
-    <!-- Sekcja wyświetlania wszystkich pokoi -->
-    <div>
-        <h2>Lista pokoi</h2>
-        @* <table> *@
-        @*     <thead> *@
-        @*         <tr> *@
-        @*             <th>Numer pokoju</th> *@
-        @*             <th>Opis</th> *@
-        @*             <th>Pojemność</th> *@
-        @*             <th>Dostępność</th> *@
-        @*         </tr> *@
-        @*     </thead> *@
-        @*     <tbody> *@
-        @*         @foreach (var room in Model) *@
-        @*         { *@
-        @*             <tr> *@
-        @*                 <td>@room.Number</td> *@
-        @*                 <td>@room.Description</td> *@
-        @*                 <td>@room.Capacity</td> *@
-        @*                 <td>@(room.IsAvailable ? "Dostępny" : "Niedostępny")</td> *@
-        @*             </tr> *@
-        @*         } *@
-        @*     </tbody> *@
-        @* </table> *@
-    </div>
+    <label for="capacity">Capacity:</label>
+    <input type="number" id="capacity" name="capacity" required><br><br>
+
+    <label for="price">Price:</label>
+    <input type="number" id="price" name="price" required><br><br>
+
+
+    <input type="button" onclick="submitForm()" value="Add Room">
+</form>
+
+<title>Rooms List</title>
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th, td {
+        padding: 10px; /* Add padding inside each cell */
+        text-align: left; /* Align text to the left */
+    }
+    th {
+        background-color: #f2f2f2; /* Add background color to header */
+    }
+    tr:nth-child(even) {
+        background-color: #f9f9f9; /* Add background color to even rows */
+    }
+    table, th, td {
+        border: 1px solid black; /* Add borders to table, headers, and cells */
+    }
+</style>
+
+<h1>Rooms List</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Number</th>
+        <th>Description</th>
+        <th>Capacity</th>
+        <th>Price</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody id="roomsList">
+    <!-- W tym miejscu zostaną wstawione dane z bazy danych -->
+    </tbody>
+</table>
+
+<script>
+    async function submitForm() {
+        const form = document.getElementById('addRoomForm');
+        const formData = new FormData(form);
+
+        const room = {
+            Number: formData.get('number'),
+            Description: formData.get('description'),
+            Capacity: parseInt(formData.get('capacity')),
+            Price: parseFloat(formData.get('price')),
+        };
+
+        try {
+            const response = await fetch('/rooms', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(room)
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText);
+            }
+
+            const result = await response.json();
+            console.log('Room added successfully:', result);
+
+            // Odśwież listę pokoi po dodaniu nowego pokoju
+            fetchRooms();
+        } catch (error) {
+            console.error('Error adding room:', error);
+        }
+    }
+
+    async function fetchRooms() {
+        try {
+            const response = await fetch('/rooms');
+            const rooms = await response.json();
+
+            console.log(rooms);
+
+            const roomsList = document.getElementById('roomsList');
+
+            roomsList.innerHTML = ''; // Wyczyść listę pokoi przed dodaniem nowych danych
+
+            rooms.forEach(room => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                        <td>${room.number}</td>
+                        <td>${room.description}</td>
+                        <td>${room.capacity}</td>
+                        <td>${room.price}</td>
+                        <td><button onclick="deleteRoom(${room.roomId})">Delete</button></td>
+                    `;
+
+                roomsList.appendChild(row);
+            });
+        } catch (error) {
+            console.error('Error fetching rooms:', error);
+        }
+    }
+
+    async function deleteRoom(roomId) {
+        try {
+            const response = await fetch(`/rooms/${roomId}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            // Refresh the list after deletion
+            fetchRooms();
+        } catch (error) {
+            console.error('Error deleting room:', error);
+        }
+    }
+
+    // Wywołaj funkcję fetchRooms() po załadowaniu strony
+    document.addEventListener('DOMContentLoaded', fetchRooms);
+</script>
 </body>
 </html>

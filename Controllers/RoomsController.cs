@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using HotelBookingApp.Infrastructure.Data;
 
-namespace HotelBookingApp.API.Controllers
+namespace WebApplication1.Controllers
 {
     [ApiController]
     [Route("[controller]")]
