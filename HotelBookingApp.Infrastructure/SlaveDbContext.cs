@@ -15,7 +15,7 @@ namespace HotelBookingApp.Infrastructure.Data
         {
             modelBuilder.Entity<Room>(entity =>
             {
-                entity.Property(e => e.Number).HasColumnType("VARCHAR(255)");
+                entity.Property(e => e.Number ).HasColumnType("VARCHAR(255)");
                 entity.Property(e => e.Description).HasColumnType("TEXT");
             });
 

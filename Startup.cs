@@ -19,11 +19,11 @@ namespace WebApplication1
 
             services.AddDbContext<MasterDbContext>(options =>
                 options.UseMySql("server=localhost;port=4406;user=repl;password=111;database=mydb;",
-                    new MySqlServerVersion(new Version(8, 4,0))));
+                    new MySqlServerVersion(new Version(8, 4, 1))));
 
             services.AddDbContext<SlaveDbContext>(options =>
                 options.UseMySql("server=localhost;port=5506;user=repl;password=111;database=mydb;",
-                    new MySqlServerVersion(new Version(8, 4,0))));
+                    new MySqlServerVersion(new Version(8, 4, 1))));
 
             services.AddSwaggerGen(c =>
             {

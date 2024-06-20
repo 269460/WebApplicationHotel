@@ -4,16 +4,19 @@ using HotelBookingApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace WebApplication1.Migrations.Slave
+namespace WebApplication1.Migrations.SlaveDb
 {
     [DbContext(typeof(SlaveDbContext))]
-    partial class SlaveDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240619174302_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,11 +33,14 @@ namespace WebApplication1.Migrations.Slave
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("BookingId"));
 
-                    b.Property<DateTime>("BookingDate")
+                    b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<int>("RoomId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -61,6 +67,7 @@ namespace WebApplication1.Migrations.Slave
 
                     b.Property<string>("Description")
                         .IsRequired()
+                        .HasMaxLength(255)
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsAvailable")
@@ -68,8 +75,10 @@ namespace WebApplication1.Migrations.Slave
 
                     b.Property<string>("Number")
                         .IsRequired()
-                        .HasMaxLength(255)
                         .HasColumnType("VARCHAR(255)");
+
+                    b.Property<float>("Price")
+                        .HasColumnType("float");
 
                     b.HasKey("RoomId");
 
