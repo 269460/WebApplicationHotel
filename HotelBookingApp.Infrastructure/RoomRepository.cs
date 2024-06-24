@@ -15,14 +15,17 @@ namespace HotelBookingApp.Infrastructure.Data
 
         public RoomRepository(IConfiguration configuration)
         {
-            _masterConnectionString = configuration.GetConnectionString("MasterConnection");
-            _slaveConnectionString = configuration.GetConnectionString("SlaveConnection");
+            // _masterConnectionString = configuration.GetConnectionString("MasterConnection");
+            // _slaveConnectionString = configuration.GetConnectionString("SlaveConnection");
+            _masterConnectionString = configuration.GetConnectionString("DefaultConnection");
+            _slaveConnectionString = configuration.GetConnectionString("DefaultConnection");
         }
+        
 
         public async Task<Room> GetRoomByIdAsync(int roomId)
         {
             Room room = null;
-            var query = "SELECT RoomId, Number, Description, Capacity, Price, IsAvailable FROM Rooms WHERE RoomId = @RoomId";
+            var query = "SELECT RoomId, RoomNumber, Capacity FROM Rooms WHERE RoomId = @RoomId";
 
             using (var connection = new MySqlConnection(_slaveConnectionString))
             using (var command = new MySqlCommand(query, connection))
@@ -37,11 +40,8 @@ namespace HotelBookingApp.Infrastructure.Data
                         room = new Room
                         {
                             RoomId = reader.GetInt32(reader.GetOrdinal("RoomId")),
-                            Number = reader.GetInt32(reader.GetOrdinal("Number")),  // Updated here
-                            Description = reader.GetString(reader.GetOrdinal("Description")),
-                            Capacity = reader.GetInt32(reader.GetOrdinal("Capacity")),
-                            Price = reader.GetFloat(reader.GetOrdinal("Price")),
-                            IsAvailable = reader.GetBoolean(reader.GetOrdinal("IsAvailable"))
+                            Number = reader.GetInt32(reader.GetOrdinal("RoomNumber")),
+                            Capacity = reader.GetInt32(reader.GetOrdinal("Capacity"))
                         };
                     }
                 }
@@ -53,7 +53,7 @@ namespace HotelBookingApp.Infrastructure.Data
         public async Task<IEnumerable<Room>> GetAllRoomsAsync()
         {
             var rooms = new List<Room>();
-            var query = "SELECT RoomId, Number, Description, Capacity, Price, IsAvailable FROM Rooms";
+            var query = "SELECT RoomId, RoomNumber, Description, Capacity, Price FROM Rooms";
 
             using (var connection = new MySqlConnection(_slaveConnectionString))
             using (var command = new MySqlCommand(query, connection))
@@ -66,11 +66,10 @@ namespace HotelBookingApp.Infrastructure.Data
                         var room = new Room
                         {
                             RoomId = reader.GetInt32(reader.GetOrdinal("RoomId")),
-                            Number = reader.GetInt32(reader.GetOrdinal("Number")),  // Updated here
+                            Number = reader.GetInt32(reader.GetOrdinal("RoomNumber")),
                             Description = reader.GetString(reader.GetOrdinal("Description")),
                             Capacity = reader.GetInt32(reader.GetOrdinal("Capacity")),
                             Price = reader.GetFloat(reader.GetOrdinal("Price")),
-                            IsAvailable = reader.GetBoolean(reader.GetOrdinal("IsAvailable"))
                         };
                         rooms.Add(room);
                     }
@@ -84,10 +83,10 @@ namespace HotelBookingApp.Infrastructure.Data
         {
             var reservedRooms = new List<Room>();
             var query = @"
-            SELECT r.RoomId, r.Number, r.Description, r.Capacity, r.Price, r.IsAvailable 
-            FROM Rooms r
-            INNER JOIN Bookings b ON r.RoomId = b.RoomId
-            WHERE b.StartDate < @EndDate AND b.EndDate > @StartDate";
+    SELECT r.RoomId, r.RoomNumber, r.Price, r.Description, r.Capacity 
+    FROM Rooms r
+    INNER JOIN Bookings b ON r.RoomId = b.RoomId
+    WHERE b.CheckInDate < @EndDate AND b.CheckOutDate > @StartDate";
 
             using (var connection = new MySqlConnection(_slaveConnectionString))
             using (var command = new MySqlCommand(query, connection))
@@ -103,11 +102,10 @@ namespace HotelBookingApp.Infrastructure.Data
                         var room = new Room
                         {
                             RoomId = reader.GetInt32(reader.GetOrdinal("RoomId")),
-                            Number = reader.GetInt32(reader.GetOrdinal("Number")),  // Updated here
+                            Number = reader.GetInt32(reader.GetOrdinal("RoomNumber")),  // Zmieniono na RoomNumber
                             Description = reader.GetString(reader.GetOrdinal("Description")),
                             Capacity = reader.GetInt32(reader.GetOrdinal("Capacity")),
-                            Price = reader.GetFloat(reader.GetOrdinal("Price")),
-                            IsAvailable = reader.GetBoolean(reader.GetOrdinal("IsAvailable"))
+                            Price = reader.GetFloat(reader.GetOrdinal("Price")) // Zmieniono typ na GetDecimal
                         };
                         reservedRooms.Add(room);
                     }
@@ -117,20 +115,22 @@ namespace HotelBookingApp.Infrastructure.Data
             return reservedRooms;
         }
 
+
         public async Task AddRoomAsync(Room room)
         {
             var query = @"
-                INSERT INTO Rooms (Number, Description, Capacity, Price, IsAvailable) 
-                VALUES (@Number, @Description, @Capacity, @Price, @IsAvailable)";
+        INSERT INTO Rooms (RoomNumber, Description, Capacity, Price) 
+        VALUES (@RoomNumber, @Description, @Capacity, @Price)";
+            
+            Console.WriteLine("AddRoomAsync function called.");
 
             using (var connection = new MySqlConnection(_masterConnectionString))
             using (var command = new MySqlCommand(query, connection))
             {
-                command.Parameters.AddWithValue("@Number", room.Number);  // Updated here
+                command.Parameters.AddWithValue("@RoomNumber", room.Number);
                 command.Parameters.AddWithValue("@Description", room.Description);
                 command.Parameters.AddWithValue("@Capacity", room.Capacity);
-                command.Parameters.AddWithValue("@Price", room.Price);
-                command.Parameters.AddWithValue("@IsAvailable", room.IsAvailable);
+                command.Parameters.AddWithValue("@Price", room.Price); // Dodajemy parametr dla pola 'Price'
 
                 await connection.OpenAsync();
                 await command.ExecuteNonQueryAsync();
@@ -151,7 +151,6 @@ namespace HotelBookingApp.Infrastructure.Data
                 command.Parameters.AddWithValue("@Description", room.Description);
                 command.Parameters.AddWithValue("@Capacity", room.Capacity);
                 command.Parameters.AddWithValue("@Price", room.Price);
-                command.Parameters.AddWithValue("@IsAvailable", room.IsAvailable);
                 command.Parameters.AddWithValue("@RoomId", room.RoomId);
 
                 await connection.OpenAsync();

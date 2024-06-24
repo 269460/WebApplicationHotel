@@ -1,0 +1,18 @@
+@model WebApplication1.Models.ReservationsViewModel
+
+<h1>Finalizacja rezerwacji</h1>
+
+<p>Potwierdzono rezerwację dla pokoju numer @Model.RoomId.</p>
+<p>Data rozpoczęcia: @Model.StartDate</p>
+<p>Data zakończenia: @Model.EndDate</p>
+
+<form asp-controller="Reservations" asp-action="ConfirmReservation" method="post">
+    <input type="hidden" name="roomId" value="@Model.RoomId" />
+    <input type="hidden" name="startDate" value="@Model.StartDate" />
+    <input type="hidden" name="endDate" value="@Model.EndDate" />
+
+    <label>Imię i nazwisko:</label>
+    <input type="text" name="customerName" required />
+
+    <button type="submit">Potwierdź rezerwację</button>
+</form>

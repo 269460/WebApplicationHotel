@@ -11,6 +11,10 @@
             margin-right: 10px;
         }
 
+        .date-inputs input {
+            margin-right: 20px; /* Dodano margines poziomy dla input */
+        }
+
         .room-table {
             margin-top: 20px;
             width: 100%;
@@ -25,6 +29,13 @@
 
         .room-table th {
             background-color: #f2f2f2;
+        }
+
+        button {
+            margin-left: 20px;
+            margin-right: 20px;
+            margin-top: 10px;
+            margin-bottom: 10px;
         }
     </style>
     <script>
@@ -76,7 +87,7 @@
                         try {
                             const data = JSON.parse(text);
                             console.log('Parsed JSON:', data); // Logujemy sparsowaną odpowiedź
-                            displayRooms(data);
+                            displayRooms(data, startDate, endDate);
                         } catch (error) {
                             console.error('Error parsing JSON:', error);
                             alert("Wystąpił błąd podczas przetwarzania danych z serwera.");
@@ -88,13 +99,13 @@
                     });
             });
 
-            function displayRooms(data) {
+            function displayRooms(data, startDate, endDate) {
                 const table = document.getElementById("rooms-table");
                 table.innerHTML = ""; // Czyszczenie poprzednich wyników
 
                 if (data.length > 0) {
                     const headerRow = document.createElement("tr");
-                    const headers = ["Numer pokoju", "Cena", "Pojemność"];
+                    const headers = ["Numer pokoju", "Opis", "Cena", "Pojemność", ""];
                     headers.forEach(headerText => {
                         const th = document.createElement("th");
                         th.textContent = headerText;
@@ -106,8 +117,12 @@
                         const row = document.createElement("tr");
 
                         const cellNumber = document.createElement("td");
-                        cellNumber.textContent = room.roomNumber;
+                        cellNumber.textContent = room.number;
                         row.appendChild(cellNumber);
+
+                        const cellDescription = document.createElement("td");
+                        cellDescription.textContent = room.description;
+                        row.appendChild(cellDescription);
 
                         const cellPrice = document.createElement("td");
                         cellPrice.textContent = room.price;
@@ -117,13 +132,23 @@
                         cellCapacity.textContent = room.capacity;
                         row.appendChild(cellCapacity);
 
+                        const cellButton = document.createElement("td");
+                        const reserveButton = document.createElement("button");
+                        reserveButton.textContent = "Zarezerwuj";
+                        reserveButton.addEventListener("click", function() {
+                            // Przekierowanie do strony rezerwacji
+                            window.location.href = `/Reservations/ConfirmReservation?roomId=${room.roomId}&startDate=${startDate}&endDate=${endDate}`;
+                        });
+                        cellButton.appendChild(reserveButton);
+                        row.appendChild(cellButton);
+
                         table.appendChild(row);
                     });
                 } else {
                     const noRoomsRow = document.createElement("tr");
                     const noRoomsCell = document.createElement("td");
                     noRoomsCell.textContent = "Brak dostępnych pokoi w wybranym terminie.";
-                    noRoomsCell.colSpan = 3;
+                    noRoomsCell.colSpan = 5; // Dopasowane do liczby kolumn
                     noRoomsRow.appendChild(noRoomsCell);
                     table.appendChild(noRoomsRow);
                 }
@@ -143,12 +168,14 @@
         </div>
         <button type="submit" id="check-availability-button">Sprawdź dostępność</button>
     </form>
-    <div id="rooms-container">
-        <h2>Dostępne pokoje:</h2>
-        <table id="rooms-table" class="room-table">
-            <!-- Tutaj zostaną dodane wyniki -->
-        </table>
-    </div>
+    <form method="post" action="/Reservations/ConfirmReservation">
+        <div id="rooms-container">
+            <h2>Dostępne pokoje:</h2>
+            <table id="rooms-table" class="room-table">
+                <!-- Tutaj zostaną dodane wyniki -->
+            </table>
+        </div>
+    </form>
 </div>
 </body>
 </html>

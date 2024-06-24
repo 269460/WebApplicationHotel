@@ -15,13 +15,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // Configure DbContexts
-builder.Services.AddDbContext<MasterDbContext>(options =>
-    options.UseMySql(builder.Configuration.GetConnectionString("MasterConnection"),
-        new MySqlServerVersion(new Version(8, 4, 1))));
+// builder.Services.AddDbContext<MasterDbContext>(options =>
+//     options.UseMySql(builder.Configuration.GetConnectionString("MasterConnection"),
+//         new MySqlServerVersion(new Version(8, 4, 1))));
+//
+// builder.Services.AddDbContext<SlaveDbContext>(options =>
+//     options.UseMySql(builder.Configuration.GetConnectionString("SlaveConnection"),
+//         new MySqlServerVersion(new Version(8, 4, 1))));
 
-builder.Services.AddDbContext<SlaveDbContext>(options =>
-    options.UseMySql(builder.Configuration.GetConnectionString("SlaveConnection"),
-        new MySqlServerVersion(new Version(8, 4, 1))));
 
 
 // Register repositories
