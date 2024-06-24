@@ -25,7 +25,7 @@ namespace HotelBookingApp.Infrastructure.Data
         public async Task<Room> GetRoomByIdAsync(int roomId)
         {
             Room room = null;
-            var query = "SELECT RoomId, RoomNumber, Capacity FROM Rooms WHERE RoomId = @RoomId";
+            var query = "SELECT RoomId, RoomNumber, Capacity, Price FROM Rooms WHERE RoomId = @RoomId";
 
             using (var connection = new MySqlConnection(_slaveConnectionString))
             using (var command = new MySqlCommand(query, connection))
@@ -41,7 +41,9 @@ namespace HotelBookingApp.Infrastructure.Data
                         {
                             RoomId = reader.GetInt32(reader.GetOrdinal("RoomId")),
                             Number = reader.GetInt32(reader.GetOrdinal("RoomNumber")),
-                            Capacity = reader.GetInt32(reader.GetOrdinal("Capacity"))
+                            Capacity = reader.GetInt32(reader.GetOrdinal("Capacity")),
+                            Price = reader.GetFloat(reader.GetOrdinal("Price")),
+
                         };
                     }
                 }
@@ -85,7 +87,7 @@ namespace HotelBookingApp.Infrastructure.Data
             var query = @"
     SELECT r.RoomId, r.RoomNumber, r.Price, r.Description, r.Capacity 
     FROM Rooms r
-    INNER JOIN Bookings b ON r.RoomId = b.RoomId
+    INNER JOIN Reservations b ON r.RoomId = b.RoomId
     WHERE b.CheckInDate < @EndDate AND b.CheckOutDate > @StartDate";
 
             using (var connection = new MySqlConnection(_slaveConnectionString))

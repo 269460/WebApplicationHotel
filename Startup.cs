@@ -16,6 +16,10 @@ namespace WebApplication1
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            // services.AddControllersWithViews();
+
+            // Rejestracja RoomRepository jako zależności
+            // services.AddScoped<RoomRepository>();
 
             services.AddDbContext<MasterDbContext>(options =>
                 options.UseMySql("server=localhost;port=4406;user=repl;password=111;database=mydb;",

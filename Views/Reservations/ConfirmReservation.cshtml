@@ -20,7 +20,9 @@
 
 <h1>Finalizacja rezerwacji</h1>
 
-<p>Potwierdzono rezerwację dla pokoju numer @Model.RoomId.</p>
+<p>Potwierdzono rezerwację dla pokoju numer @Model.RoomNumber.</p>
+<p>Liczba miejsc: @Model.Capacity.</p>
+<p>Cena: @Model.Price.</p>
 <p>Data rozpoczęcia: @Model.StartDate</p>
 <p>Data zakończenia: @Model.EndDate</p>
 
@@ -30,7 +32,7 @@
     <input type="hidden" name="EndDate" value="@Model.EndDate" />
 
     <label>Imię i nazwisko:</label>
-    <input type="text" name="CustomerName" value="@Model.CustomerName" required />
+    <input type="text" name="username" value="@Model.Username" required />
 
     <button type="submit">Potwierdź rezerwację</button>
 </form>

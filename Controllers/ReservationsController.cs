@@ -45,9 +45,12 @@
 //         return View(viewModel);
 //     }
 // }
+
+using HotelBookingApp.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Models;
 using HotelBookingApp.Domain.Services;
+using HotelBookingApp.Infrastructure.Data;
 
 namespace WebApplication1.Controllers
 {
@@ -99,19 +102,22 @@ namespace WebApplication1.Controllers
     // }
     public class ReservationsController : Controller
     {
-        
-        private IRoomService _roomService;
+        private readonly RoomRepository _roomRepository;
+        private readonly BookingRepository _bookingRepository;
+
+        public ReservationsController(RoomRepository roomRepository,BookingRepository bookingRepository)
+        {
+            _roomRepository = roomRepository;
+            _bookingRepository = bookingRepository;
+        }
+        // private IRoomService _roomService;
         public IActionResult Index()
         {
             return View();
         }
-        public ReservationsController(IRoomService roomService)
+        public async Task<IActionResult> ConfirmReservation(int roomId, DateTime startDate, DateTime endDate)
         {
-            _roomService = roomService;
-        }
-        public IActionResult ConfirmReservation(int roomId, string startDate, string endDate)
-        {
-            var room = _roomService.GetRoomByIdAsync(roomId);
+            Room room = await _roomRepository.GetRoomByIdAsync(roomId);
             if (room == null)
             {
                 return NotFound();
@@ -119,7 +125,9 @@ namespace WebApplication1.Controllers
             var viewModel = new ReservationsViewModel
             {
                 RoomId = roomId,
-                // RoomNumber = room.Number,
+                RoomNumber = room.Number,
+                Price = room.Price,
+                Capacity = room.Capacity,
                 StartDate = startDate,
                 EndDate = endDate
             };
@@ -128,12 +136,9 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost]
-        public IActionResult ConfirmReservation(int roomId, string startDate, string endDate, string customerName)
+        public async Task<IActionResult> ConfirmReservation(int roomId, DateTime startDate, DateTime endDate, string username)
         {
-        
-
-        var room = _roomService.GetRoomByIdAsync(roomId);
-
+            Room room = await _roomRepository.GetRoomByIdAsync(roomId);
             if (room == null)
             {
                 return NotFound();
@@ -142,15 +147,26 @@ namespace WebApplication1.Controllers
             var viewModel = new ReservationsViewModel
             {
                 RoomId = roomId,
-                // RoomNumber = room.Number,
+                RoomNumber = room.Number,
                 StartDate = startDate,
                 EndDate = endDate,
-                CustomerName = customerName
+                Username = username
             };
 
             // Przetwarzanie rezerwacji i zapis do bazy danych
+            Booking booking = new Booking
+            {
+                CheckInDate = startDate,
+                CheckOutDate = endDate,
+                RoomId = roomId,
+                UserId = 1
+
+            };
+            await _bookingRepository.AddBookingAsync(booking);
 
             return View(viewModel);
         }
+        
+    
     }
 }

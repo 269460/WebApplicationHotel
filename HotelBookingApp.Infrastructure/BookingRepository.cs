@@ -26,7 +26,7 @@ namespace HotelBookingApp.Infrastructure.Data
             using (var connection = new MySqlConnection(_slaveConnectionString))
             {
                 await connection.OpenAsync();
-                using (var command = new MySqlCommand("SELECT * FROM Bookings WHERE BookingId = @BookingId", connection))
+                using (var command = new MySqlCommand("SELECT * FROM Reservations WHERE BookingId = @BookingId", connection))
                 {
                     command.Parameters.AddWithValue("@BookingId", bookingId);
 
@@ -56,7 +56,7 @@ namespace HotelBookingApp.Infrastructure.Data
             using (var connection = new MySqlConnection(_slaveConnectionString))
             {
                 await connection.OpenAsync();
-                using (var command = new MySqlCommand("SELECT * FROM Bookings", connection))
+                using (var command = new MySqlCommand("SELECT * FROM Reservations", connection))
                 {
                     using (var reader = await command.ExecuteReaderAsync())
                     {
@@ -83,11 +83,14 @@ namespace HotelBookingApp.Infrastructure.Data
             {
                 await connection.OpenAsync();
                 using (var command = new MySqlCommand(
-                    "INSERT INTO Bookings (RoomId, UserId) VALUES (@RoomId, @UserId)", connection))
+                    "INSERT INTO Reservations (RoomId, UserId, CheckInDate, CheckOutDate) VALUES (@RoomId, @UserId, @CheckInDate, @CheckOutDate)", connection))
                 {
                     command.Parameters.AddWithValue("@RoomId", booking.RoomId);
                     command.Parameters.AddWithValue("@UserId", booking.UserId);
-                    // Dodaj inne parametry w zależności od struktury tabeli
+                    command.Parameters.AddWithValue("@CheckInDate", booking.CheckInDate);
+                    command.Parameters.AddWithValue("@CheckOutDate", booking.CheckOutDate);
+                    
+                    
 
                     await command.ExecuteNonQueryAsync();
                 }
@@ -100,7 +103,7 @@ namespace HotelBookingApp.Infrastructure.Data
             {
                 await connection.OpenAsync();
                 using (var command = new MySqlCommand(
-                    "UPDATE Bookings SET RoomId = @RoomId, UserId = @UserId WHERE BookingId = @BookingId", connection))
+                    "UPDATE Reservations SET RoomId = @RoomId, UserId = @UserId WHERE BookingId = @BookingId", connection))
                 {
                     command.Parameters.AddWithValue("@RoomId", booking.RoomId);
                     command.Parameters.AddWithValue("@UserId", booking.UserId);
@@ -117,7 +120,7 @@ namespace HotelBookingApp.Infrastructure.Data
             using (var connection = new MySqlConnection(_masterConnectionString))
             {
                 await connection.OpenAsync();
-                using (var command = new MySqlCommand("DELETE FROM Bookings WHERE BookingId = @BookingId", connection))
+                using (var command = new MySqlCommand("DELETE FROM Reservations WHERE BookingId = @BookingId", connection))
                 {
                     command.Parameters.AddWithValue("@BookingId", bookingId);
 

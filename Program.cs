@@ -29,6 +29,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<RoomRepository>();
+builder.Services.AddScoped<BookingRepository>();
 
 // Register services
 builder.Services.AddScoped<IBookingService, BookingService>();
