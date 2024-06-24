@@ -1,3 +1,5 @@
+using HotelBookingApp.Domain.Models;
+
 namespace WebApplication1.Models
 {
     public class ReservationsViewModel
@@ -5,6 +7,7 @@ namespace WebApplication1.Models
         public int RoomId { get; set; }
         public string StartDate { get; set; }
         public string EndDate { get; set; }
-        public string CustomerName { get; set; }
+        public string CustomerName { get; set; } 
+        public int RoomNumber { get; set; }
     }
 }

@@ -1,3 +1,21 @@
+@* @model WebApplication1.Models.ReservationsViewModel *@
+@* *@
+@* <h1>Finalizacja rezerwacji</h1> *@
+@* *@
+@* <p>Potwierdzono rezerwację dla pokoju numer @Model.RoomId.</p> *@
+@* <p>Data rozpoczęcia: @Model.StartDate</p> *@
+@* <p>Data zakończenia: @Model.EndDate</p> *@
+@* *@
+@* <form asp-controller="Reservations" asp-action="ConfirmReservation" method="post"> *@
+@*     <input type="hidden" name="roomId" value="@Model.RoomId" /> *@
+@*     <input type="hidden" name="startDate" value="@Model.StartDate" /> *@
+@*     <input type="hidden" name="endDate" value="@Model.EndDate" /> *@
+@* *@
+@*     <label>Imię i nazwisko:</label> *@
+@*     <input type="text" name="customerName" required /> *@
+@* *@
+@*     <button type="submit">Potwierdź rezerwację</button> *@
+@* </form> *@
 @model WebApplication1.Models.ReservationsViewModel
 
 <h1>Finalizacja rezerwacji</h1>
@@ -7,12 +25,12 @@
 <p>Data zakończenia: @Model.EndDate</p>
 
 <form asp-controller="Reservations" asp-action="ConfirmReservation" method="post">
-    <input type="hidden" name="roomId" value="@Model.RoomId" />
-    <input type="hidden" name="startDate" value="@Model.StartDate" />
-    <input type="hidden" name="endDate" value="@Model.EndDate" />
+    <input type="hidden" name="RoomId" value="@Model.RoomId" />
+    <input type="hidden" name="StartDate" value="@Model.StartDate" />
+    <input type="hidden" name="EndDate" value="@Model.EndDate" />
 
     <label>Imię i nazwisko:</label>
-    <input type="text" name="customerName" required />
+    <input type="text" name="CustomerName" value="@Model.CustomerName" required />
 
     <button type="submit">Potwierdź rezerwację</button>
 </form>

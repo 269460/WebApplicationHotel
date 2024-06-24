@@ -119,8 +119,9 @@ namespace HotelBookingApp.Infrastructure.Data
         public async Task AddRoomAsync(Room room)
         {
             var query = @"
+START TRANSACTION;
         INSERT INTO Rooms (RoomNumber, Description, Capacity, Price) 
-        VALUES (@RoomNumber, @Description, @Capacity, @Price)";
+        VALUES (@RoomNumber, @Description, @Capacity, @Price); COMMIT;";
             
             Console.WriteLine("AddRoomAsync function called.");
 
