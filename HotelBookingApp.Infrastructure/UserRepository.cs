@@ -14,8 +14,10 @@ namespace HotelBookingApp.Infrastructure.Data
 
         public UserRepository(IConfiguration configuration)
         {
-            _masterConnectionString = configuration.GetConnectionString("MasterConnection");
-            _slaveConnectionString = configuration.GetConnectionString("SlaveConnection");
+            // _masterConnectionString = configuration.GetConnectionString("MasterConnection");
+            // _slaveConnectionString = configuration.GetConnectionString("SlaveConnection");
+            _masterConnectionString = configuration.GetConnectionString("DefaultConnection");
+            _slaveConnectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
         public async Task<User> GetUserByIdAsync(int userId)
@@ -72,19 +74,20 @@ namespace HotelBookingApp.Infrastructure.Data
             return users;
         }
 
-        public async Task<User> GetUserByUsernameAsync(string username)
+        public async Task<User> GetUserByMailAsync(string mail)
         {
             using (var connection = new MySqlConnection(_slaveConnectionString))
             {
                 await connection.OpenAsync();
-                using (var command = new MySqlCommand("SELECT * FROM Users WHERE Username = @Username", connection))
+                using (var command = new MySqlCommand("SELECT * FROM Users WHERE Email = @Email", connection))
                 {
-                    command.Parameters.AddWithValue("@Username", username);
+                    command.Parameters.AddWithValue("@Email", mail);
 
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         if (await reader.ReadAsync())
                         {
+                            
                             return new User
                             {
                                 UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
@@ -106,11 +109,11 @@ namespace HotelBookingApp.Infrastructure.Data
                 await connection.OpenAsync();
                 using (var command =
                        new MySqlCommand(
-                           "INSERT INTO Users (Username, /* Inne kolumny */) VALUES (@Username, /* Inne wartości */)",
+                           "INSERT INTO Users (Username, Email,Role) VALUES (@Username, @Email,'customer')",
                            connection))
                 {
                     command.Parameters.AddWithValue("@Username", user.Username);
-                    // Dodaj inne parametry w zależności od struktury tabeli
+                    command.Parameters.AddWithValue("@Email", user.Email);
 
                     await command.ExecuteNonQueryAsync();
                 }
@@ -124,13 +127,11 @@ namespace HotelBookingApp.Infrastructure.Data
                 await connection.OpenAsync();
                 using (var command =
                        new MySqlCommand(
-                           "UPDATE Users SET Username = @Username, /* Inne kolumny */ WHERE UserId = @UserId",
+                           "UPDATE Users SET Username = @Username,  WHERE UserId = @UserId",
                            connection))
                 {
                     command.Parameters.AddWithValue("@Username", user.Username);
                     command.Parameters.AddWithValue("@UserId", user.UserId);
-                    // Dodaj inne parametry w zależności od struktury tabeli
-
                     await command.ExecuteNonQueryAsync();
                 }
             }

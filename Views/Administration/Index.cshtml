@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Room</title>
+    <title>Room Management</title>
 </head>
 <body>
 <form id="addRoomForm">
@@ -18,7 +18,6 @@
 
     <label for="price">Price:</label>
     <input type="number" id="price" name="price" required><br><br>
-
 
     <input type="button" onclick="submitForm()" value="Add Room">
 </form>
@@ -56,6 +55,22 @@
     </tr>
     </thead>
     <tbody id="roomsList">
+    <!-- W tym miejscu zostaną wstawione dane z bazy danych -->
+    </tbody>
+</table>
+
+<h1>Reservations List</h1>
+<table>
+    <thead>
+    <tr>
+        <th>RoomId</th>
+        <th>UserId</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody id="reservationsList">
     <!-- W tym miejscu zostaną wstawione dane z bazy danych -->
     </tbody>
 </table>
@@ -142,8 +157,58 @@
         }
     }
 
-    // Wywołaj funkcję fetchRooms() po załadowaniu strony
-    document.addEventListener('DOMContentLoaded', fetchRooms);
+    async function fetchReservations() {
+        try {
+            const response = await fetch('/Bookings');
+            const reservations = await response.json();
+
+            console.log(reservations);
+
+            const reservationsList = document.getElementById('reservationsList');
+
+            reservationsList.innerHTML = ''; // Wyczyść listę rezerwacji przed dodaniem nowych danych
+            
+
+            reservations.forEach(reservation => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                        <td>${reservation.roomId}</td>
+                        <td>${reservation.userId}</td>
+                        <td>${reservation.checkInDate}</td>
+                        <td>${reservation.checkOutDate}</td>
+                        <td><button onclick="deleteReservation(${reservation.bookingId})">Delete</button></td>
+                    `;
+
+                reservationsList.appendChild(row);
+            });
+        } catch (error) {
+            console.error('Error fetching reservations:', error);
+        }
+    }
+
+    async function deleteReservation(reservationId) {
+        try {
+            const response = await fetch(`/Bookings/${reservationId}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            // Refresh the list after deletion
+            fetchReservations();
+        } catch (error) {
+            console.error('Error deleting reservation:', error);
+        }
+    }
+
+    // Wywołaj funkcje fetchRooms() i fetchReservations() po załadowaniu strony
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchRooms();
+        fetchReservations();
+    });
 </script>
 </body>
 </html>

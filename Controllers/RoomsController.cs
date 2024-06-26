@@ -87,6 +87,8 @@ namespace WebApplication1.Controllers
             var availableRooms = await _roomService.GetAvailableRoomsAsync(startDate, endDate);
             return Ok(availableRooms);
         }
+        
+       
     }
     
 }

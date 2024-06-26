@@ -8,7 +8,7 @@ public interface IUserRepository
 {
     Task<User> GetUserByIdAsync(int userId);
     Task<IEnumerable<User>> GetAllUsersAsync();
-    Task<User> GetUserByUsernameAsync(string username);
+    Task<User> GetUserByMailAsync(string mail);
     Task AddUserAsync(User user);
     Task UpdateUserAsync(User user);
     Task DeleteUserAsync(int userId);

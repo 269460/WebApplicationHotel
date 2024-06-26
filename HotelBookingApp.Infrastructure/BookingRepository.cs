@@ -67,7 +67,8 @@ namespace HotelBookingApp.Infrastructure.Data
                                 BookingId = reader.GetInt32("BookingId"),
                                 RoomId = reader.GetInt32("RoomId"),
                                 UserId = reader.GetInt32("UserId"),
-                                // Dodaj inne pola w zależności od struktury tabeli
+                                CheckInDate = reader.GetDateTime("CheckInDate"),
+                                CheckOutDate = reader.GetDateTime("CheckOutDate"),
                             });
                         }
                     }
@@ -76,6 +77,7 @@ namespace HotelBookingApp.Infrastructure.Data
 
             return bookings;
         }
+
 
         public async Task AddBookingAsync(Booking booking)
         {
@@ -89,8 +91,6 @@ namespace HotelBookingApp.Infrastructure.Data
                     command.Parameters.AddWithValue("@UserId", booking.UserId);
                     command.Parameters.AddWithValue("@CheckInDate", booking.CheckInDate);
                     command.Parameters.AddWithValue("@CheckOutDate", booking.CheckOutDate);
-                    
-                    
 
                     await command.ExecuteNonQueryAsync();
                 }

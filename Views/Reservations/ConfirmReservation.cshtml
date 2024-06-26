@@ -2,20 +2,23 @@
 @* *@
 @* <h1>Finalizacja rezerwacji</h1> *@
 @* *@
-@* <p>Potwierdzono rezerwację dla pokoju numer @Model.RoomId.</p> *@
+@* <p>Potwierdzono rezerwację dla pokoju numer @Model.RoomNumber.</p> *@
+@* <p>Liczba miejsc: @Model.Capacity.</p> *@
+@* <p>Cena: @Model.Price.</p> *@
 @* <p>Data rozpoczęcia: @Model.StartDate</p> *@
 @* <p>Data zakończenia: @Model.EndDate</p> *@
 @* *@
 @* <form asp-controller="Reservations" asp-action="ConfirmReservation" method="post"> *@
-@*     <input type="hidden" name="roomId" value="@Model.RoomId" /> *@
-@*     <input type="hidden" name="startDate" value="@Model.StartDate" /> *@
-@*     <input type="hidden" name="endDate" value="@Model.EndDate" /> *@
+@*     <input type="hidden" name="RoomId" value="@Model.RoomId" /> *@
+@*     <input type="hidden" name="StartDate" value="@Model.StartDate" /> *@
+@*     <input type="hidden" name="EndDate" value="@Model.EndDate" /> *@
 @* *@
 @*     <label>Imię i nazwisko:</label> *@
-@*     <input type="text" name="customerName" required /> *@
+@*     <input type="text" name="username" value="@Model.Username" required /> *@
 @* *@
 @*     <button type="submit">Potwierdź rezerwację</button> *@
 @* </form> *@
+
 @model WebApplication1.Models.ReservationsViewModel
 
 <h1>Finalizacja rezerwacji</h1>
@@ -26,13 +29,47 @@
 <p>Data rozpoczęcia: @Model.StartDate</p>
 <p>Data zakończenia: @Model.EndDate</p>
 
-<form asp-controller="Reservations" asp-action="ConfirmReservation" method="post">
+<form id="confirmForm" asp-controller="Reservations" asp-action="ConfirmReservation" method="post">
     <input type="hidden" name="RoomId" value="@Model.RoomId" />
     <input type="hidden" name="StartDate" value="@Model.StartDate" />
     <input type="hidden" name="EndDate" value="@Model.EndDate" />
 
-    <label>Imię i nazwisko:</label>
+    <label>Nazwa użytkownika:</label>
     <input type="text" name="username" value="@Model.Username" required />
+    <label>Adres e-mail:</label>
+    <input type="text" name="email" value="@Model.Email" required />
 
     <button type="submit">Potwierdź rezerwację</button>
 </form>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("confirmForm").addEventListener("submit", function(event) {
+                // Przerywamy domyślną akcję formularza
+                event.preventDefault();
+
+                // Wysyłamy formularz za pomocą AJAX
+                fetch("/Reservations/ConfirmReservation", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: new URLSearchParams(new FormData(document.getElementById("confirmForm"))),
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Jeśli odpowiedź jest OK, przekierowujemy na stronę FinishedReservation
+                        window.location.href = "/Reservations/FinishedReservation";
+                    } else {
+                        alert("Wystąpił błąd podczas potwierdzania rezerwacji.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Błąd:', error);
+                    alert("Wystąpił błąd podczas potwierdzania rezerwacji.");
+                });
+            });
+        });
+    </script>
+}

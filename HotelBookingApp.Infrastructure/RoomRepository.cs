@@ -116,12 +116,41 @@ namespace HotelBookingApp.Infrastructure.Data
 
             return reservedRooms;
         }
+        
+        public async Task<IEnumerable<Room>> GetRoomsByDescriptionAsync(string description)
+        {
+            var rooms = new List<Room>();
+            var query = $"SELECT RoomId, Number, Description, Capacity, Price FROM Rooms WHERE Description LIKE '%{description}%'";
+
+            using (var connection = new MySqlConnection(_slaveConnectionString))
+            using (var command = new MySqlCommand(query, connection))
+            {
+                await connection.OpenAsync();
+                using (var reader = await command.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        var room = new Room
+                        {
+                            RoomId = reader.GetInt32(reader.GetOrdinal("RoomId")),
+                            Number = reader.GetInt32(reader.GetOrdinal("Number")),
+                            Description = reader.GetString(reader.GetOrdinal("Description")),
+                            Capacity = reader.GetInt32(reader.GetOrdinal("Capacity")),
+                            Price = reader.GetFloat(reader.GetOrdinal("Price"))
+                        };
+                        rooms.Add(room);
+                    }
+                }
+            }
+
+            return rooms;
+        }
 
 
         public async Task AddRoomAsync(Room room)
         {
             var query = @"
-START TRANSACTION;
+        START TRANSACTION;
         INSERT INTO Rooms (RoomNumber, Description, Capacity, Price) 
         VALUES (@RoomNumber, @Description, @Capacity, @Price); COMMIT;";
             

@@ -18,9 +18,9 @@ public class UserService : IUserService
         _userRepository = userRepository;
     }
 
-    public async Task<User> AuthenticateUserAsync(string username, string password)
+    public async Task<User> AuthenticateUserAsync(string mail, string password)
     {
-        var user = await _userRepository.GetUserByUsernameAsync(username);
+        var user = await _userRepository.GetUserByMailAsync(mail);
         if (user != null && VerifyPasswordHash(password, user.PasswordHash))
         {
             return user;

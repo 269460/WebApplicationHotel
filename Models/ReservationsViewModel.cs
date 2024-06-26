@@ -7,9 +7,11 @@ namespace WebApplication1.Models
         public int RoomId { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public string Username { get; set; } 
         public int RoomNumber { get; set; }
         public int Capacity { get; set; }
         public float Price { get; set; }
+        public int UserId { get; set; }
+        public string Username { get; set; } 
+        public string Email { get; set; }
     }
 }
