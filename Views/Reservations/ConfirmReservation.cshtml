@@ -1,24 +1,3 @@
-@* @model WebApplication1.Models.ReservationsViewModel *@
-@* *@
-@* <h1>Finalizacja rezerwacji</h1> *@
-@* *@
-@* <p>Potwierdzono rezerwację dla pokoju numer @Model.RoomNumber.</p> *@
-@* <p>Liczba miejsc: @Model.Capacity.</p> *@
-@* <p>Cena: @Model.Price.</p> *@
-@* <p>Data rozpoczęcia: @Model.StartDate</p> *@
-@* <p>Data zakończenia: @Model.EndDate</p> *@
-@* *@
-@* <form asp-controller="Reservations" asp-action="ConfirmReservation" method="post"> *@
-@*     <input type="hidden" name="RoomId" value="@Model.RoomId" /> *@
-@*     <input type="hidden" name="StartDate" value="@Model.StartDate" /> *@
-@*     <input type="hidden" name="EndDate" value="@Model.EndDate" /> *@
-@* *@
-@*     <label>Imię i nazwisko:</label> *@
-@*     <input type="text" name="username" value="@Model.Username" required /> *@
-@* *@
-@*     <button type="submit">Potwierdź rezerwację</button> *@
-@* </form> *@
-
 @model WebApplication1.Models.ReservationsViewModel
 
 <h1>Finalizacja rezerwacji</h1>

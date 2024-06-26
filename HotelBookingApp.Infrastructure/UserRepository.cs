@@ -14,10 +14,8 @@ namespace HotelBookingApp.Infrastructure.Data
 
         public UserRepository(IConfiguration configuration)
         {
-            // _masterConnectionString = configuration.GetConnectionString("MasterConnection");
-            // _slaveConnectionString = configuration.GetConnectionString("SlaveConnection");
-            _masterConnectionString = configuration.GetConnectionString("DefaultConnection");
-            _slaveConnectionString = configuration.GetConnectionString("DefaultConnection");
+            _masterConnectionString = configuration.GetConnectionString("MasterConnection");
+            _slaveConnectionString = configuration.GetConnectionString("SlaveConnection");
         }
 
         public async Task<User> GetUserByIdAsync(int userId)

@@ -19,7 +19,7 @@ namespace WebApplication1.Controllers
             _bookingRepository = bookingRepository;
             _userRepository = userRepository;
         }
-        // private IRoomService _roomService;
+        
         public IActionResult Index()
         {
             return View();
